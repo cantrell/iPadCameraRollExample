@@ -5,6 +5,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filesystem.File;
 	import flash.geom.Rectangle;
 	import flash.media.CameraRoll;
 	import flash.media.CameraRollBrowseOptions;
@@ -56,7 +57,7 @@ package
 		
 		private function onOpenPhotoPicker(e:MouseEvent):void
 		{
-			if (CameraRoll.supportsBrowseForImage)
+			if (CameraRoll.supportsBrowseForImage) // We're on mobile
 			{
 				var crOpts:CameraRollBrowseOptions = new CameraRollBrowseOptions();
 				crOpts.height = this.stage.stageHeight / 3;
@@ -64,6 +65,19 @@ package
 				crOpts.origin = new Rectangle(e.target.x, e.target.y, e.target.width, e.target.height);
 				var cr:CameraRoll = new CameraRoll();
 				cr.browseForImage(crOpts);
+			}
+			else // We're on the desktop
+			{
+				var picDirectory:File;
+				if (File.userDirectory.resolvePath("Pictures").exists) // Mac
+				{
+					picDirectory = File.userDirectory.resolvePath("Pictures");
+				}
+				else // Windows
+				{
+					picDirectory = File.userDirectory.resolvePath("My Pictures");
+				}
+				picDirectory.browseForOpen("Choose a picture");
 			}
 		}
 	}
